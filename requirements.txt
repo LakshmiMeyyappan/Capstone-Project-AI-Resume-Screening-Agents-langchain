@@ -9,6 +9,5 @@ langchain-google-genai==1.0.7
 google-ai-generativelanguage==0.6.5
 python-dotenv
 pypdf
-duckduckgo-search
 docx2txt
 
