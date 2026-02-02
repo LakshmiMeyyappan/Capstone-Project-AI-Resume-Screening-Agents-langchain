@@ -9,10 +9,8 @@ from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
 
 logger = logging.getLogger(__name__)
 
-
-# ============================
 # STRUCTURED OUTPUT FROM AGENTS
-# ============================
+
 class CandidateEvaluation(BaseModel):
     candidate_name: str = Field(description="Full name")
     seniority_level: str = Field(description="Junior / Mid / Senior")
@@ -25,9 +23,9 @@ class CandidateEvaluation(BaseModel):
     final_reasoning: str = Field(description="Hiring decision summary")
 
 
-# ============================
+
 # MAIN CLASS
-# ============================
+
 class HiringAgency:
     def __init__(self):
         api_key = os.getenv("GOOGLE_API_KEY")
@@ -45,9 +43,9 @@ class HiringAgency:
 
         self.parser = JsonOutputParser(pydantic_object=CandidateEvaluation)
 
-    # ============================
+    
     # LOAD RESUME FILE
-    # ============================
+ 
     def ingest_document(self, file_path):
         try:
             if file_path.endswith(".pdf"):
@@ -68,9 +66,9 @@ class HiringAgency:
             logger.error(f"Error loading file {file_path}: {e}")
             return None
 
-    # ============================
+
     # HR MULTI-AGENT CHAIN
-    # ============================
+
     def recruiter_agent(self, resume_text, jd_text):
         """
         5 AGENTS INSIDE ONE PROMPT:
@@ -89,25 +87,25 @@ Analyze the following RESUME against the JOB DESCRIPTION.
 
 Perform these AGENTS internally:
 
-------------------------------
-1️⃣ SKILL EXTRACTION AGENT
-------------------------------
+
+ SKILL EXTRACTION AGENT
+
 • Extract all technical + non-technical skills from resume.
 
-------------------------------
-2️⃣ SENIORITY AGENT
-------------------------------
+
+ SENIORITY AGENT
+
 • Identify candidate's seniority (Junior / Mid / Senior)
 • Compare with JD seniority requirement.
 
-------------------------------
-3️⃣ GAP ANALYSIS AGENT
-------------------------------
+
+ GAP ANALYSIS AGENT
+
 • Find skills missing compared to JD.
 
-------------------------------
-4️⃣ RED FLAGS AGENT
-------------------------------
+
+ RED FLAGS AGENT
+
 Detect:
 • Long career gaps
 • Too many short job cycles
@@ -115,14 +113,14 @@ Detect:
 • No progression
 • Weak project depth
 
-------------------------------
-5️⃣ ATS SCORING AGENT
-------------------------------
+
+ ATS SCORING AGENT
+
 • Score 0–100 based on skill match + seniority alignment.
 
-------------------------------
+
 Return FINAL structured JSON.
-------------------------------
+
 
 JOB DESCRIPTION:
 {jd}
@@ -151,9 +149,9 @@ RESUME:
             logger.error(f"Recruiter Agent Error: {e}")
             return None
 
-    # ============================
+  
     # ENTRY POINT
-    # ============================
+
     def process_application(self, file_path, jd_text):
         resume_text = self.ingest_document(file_path)
         if not resume_text:
